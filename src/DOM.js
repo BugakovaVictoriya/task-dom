@@ -5,6 +5,11 @@
   Считаем, что всегда передается тег, допускающий вставку текста в качестве своего содержимого (P, DIV, I и пр.).
 */
 export function appendToBody(tag, content, count) {
+    for (let i = 0; i < count; i++) {
+        const el = document.createElement(tag);
+        el.innerHTML = content;
+        document.body.insertAdjacentElement('beforeend', el);
+    }
 }
 
 /*
@@ -15,6 +20,43 @@ export function appendToBody(tag, content, count) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function generateTree(childrenCount, level) {
+    if (!document.body.firstChild) {
+        //console.log("111");
+        const elM = document.createElement('div');
+        let s = 'item_' + (level - 1);
+        elM.className = s;
+        document.body.insertAdjacentElement('beforeend', elM);
+        s = 'item_' + level;
+        const el = document.createElement('div');
+        el.className = s;
+        elM.insertAdjacentElement('beforeend', el);
+        return generateTree(childrenCount, level - 1);
+    } else {
+        //console.log("222");
+        let preds = document.body.firstChild;
+        //console.log(preds.className);
+        let node = preds.firstChild;
+        //console.log(preds.childNodes);
+        //console.log(node.className);
+        for (let i = 0; i < childrenCount - 1; i++) {
+            const el = node.cloneNode(true);
+            preds.appendChild(el);
+            //preds.insertAdjacentElement('beforeend', el);
+        }
+        //return document.body;
+        if (level == 1) {
+            //console.log("999");
+            return document.body;
+        }
+        const elM = document.createElement('div');
+        let s = 'item_' + (level - 1);
+        elM.className = s;
+        //console.log(elM.className);
+        document.body.insertAdjacentElement('afterbegin', elM);
+        elM.appendChild(preds);
+        return generateTree(childrenCount, level - 1);
+        //создать сверху
+    }
 }
 
 /*
@@ -26,4 +68,20 @@ export function generateTree(childrenCount, level) {
   Сформированное дерево верните в качестве результата работы функции.
 */
 export function replaceNodes() {
+    let childrenCount = 2;
+    let level = 3;
+    generateTree(childrenCount, level);
+    for (let i = 0; i < childrenCount; i++) {
+        let el = document.body.getElementsByClassName('item_2')[i];
+        var elNew = document.createElement('section');
+        elNew.innerHTML = el.innerHTML;
+
+        Array.prototype.forEach.call(el.attributes, function (attr) {
+            elNew.setAttribute(attr.name, attr.value);
+        });
+
+        el.parentNode.insertBefore(elNew, el);
+        el.parentNode.removeChild(el);
+    }
+    return document.body;
 }
