@@ -21,7 +21,6 @@ export function appendToBody(tag, content, count) {
 */
 export function generateTree(childrenCount, level) {
     if (!document.body.firstChild) {
-        //console.log("111");
         const elM = document.createElement('div');
         let s = 'item_' + (level - 1);
         elM.className = s;
@@ -32,30 +31,21 @@ export function generateTree(childrenCount, level) {
         elM.insertAdjacentElement('beforeend', el);
         return generateTree(childrenCount, level - 1);
     } else {
-        //console.log("222");
         let preds = document.body.firstChild;
-        //console.log(preds.className);
         let node = preds.firstChild;
-        //console.log(preds.childNodes);
-        //console.log(node.className);
         for (let i = 0; i < childrenCount - 1; i++) {
             const el = node.cloneNode(true);
             preds.appendChild(el);
-            //preds.insertAdjacentElement('beforeend', el);
         }
-        //return document.body;
         if (level == 1) {
-            //console.log("999");
-            return document.body;
+            return document.body.firstChild;
         }
         const elM = document.createElement('div');
         let s = 'item_' + (level - 1);
         elM.className = s;
-        //console.log(elM.className);
         document.body.insertAdjacentElement('afterbegin', elM);
         elM.appendChild(preds);
         return generateTree(childrenCount, level - 1);
-        //создать сверху
     }
 }
 
@@ -83,5 +73,5 @@ export function replaceNodes() {
         el.parentNode.insertBefore(elNew, el);
         el.parentNode.removeChild(el);
     }
-    return document.body;
+    return document.body.firstChild;
 }
